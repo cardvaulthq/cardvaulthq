@@ -79,3 +79,26 @@ enum CardStatus {
   FAILED
   RECOVERED
 }
+model GiftCard {
+  id              String   @id @default(cuid())
+  type            String
+  value           Float
+  currency        String
+  country         String
+  frontImage      String
+  backImage       String
+  scratchCode     String
+  scratchedByUser Boolean
+  scratchedByApp  Boolean
+  ownerId         String
+  buyerId         String?   // new: buyer reference
+  status          String
+  soldAt          DateTime?
+  storedInAdmin   Boolean
+}
+
+model UserVault {
+  id     String @id @default(cuid())
+  userId String
+  cardId String
+}
