@@ -102,3 +102,20 @@ model UserVault {
   userId String
   cardId String
 }
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String
+  mainBalance Float   @default(0)
+  pendingBalance Float @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Withdrawal {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Float
+  method      String    // "local", "foreign", "USDT"
+  accountInfo String    // account number / wallet address
+  status      String    @default("PENDING") // PENDING, COMPLETED, FAILED
+  createdAt   DateTime  @default(now())
+}
