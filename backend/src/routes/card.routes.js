@@ -88,4 +88,14 @@ router.post("/buy", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+import { broadcastTrade } from "../sockets/trades.js";
+
+// After updating card and vault
+broadcastTrade({
+  type: updatedCard.type,
+  value: updatedCard.value,
+  currency: updatedCard.currency,
+  buyerId: buyerId,
+  timestamp: new Date(),
+});
 export default router;
