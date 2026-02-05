@@ -38,5 +38,54 @@ router.post("/upload", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// Buy a gift card
+router.post("/buy", async (req, res) => {
+  try {
+    const { cardId, buyerId, paymentAmount, paymentMethod } = req.body;
 
+    // Fetch card info
+    const card = await prisma.giftCard.findUnique({ where: { id: cardId } });
+
+    if (!card) return res.status(404).json({ error: "Card not found" });
+    if (card.status !== "PENDING") return res.status(400).json({ error: "Card not available" });
+
+    // Check payment (placeholder logic)
+    // In real app → integrate Stripe / Paystack / USDT wallet
+    if (paymentAmount < card.value) return res.status(400).json({ error: "Insufficient payment" });
+
+    // Mark card as sold
+    const updatedCard = await prisma.giftCard.update({
+      where: { id: cardId },
+      data: {
+        status: "SOLD",
+        buyerId: buyerId,
+        soldAt: new Date(),
+      },
+    });
+
+    // Add card to buyer's internal vault
+    await prisma.userVault.create({
+      data: {
+        userId: buyerId,
+        cardId: cardId,
+      },
+    });
+
+    res.json({
+      success: true,
+      message: "Payment received. Card unlocked.",
+      card: {
+        type: updatedCard.type,
+        value: updatedCard.value,
+        currency: updatedCard.currency,
+        frontImage: updatedCard.frontImage,
+        backImage: updatedCard.backImage,
+        scratchCode: updatedCard.scratchCode,
+      },
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 export default router;
