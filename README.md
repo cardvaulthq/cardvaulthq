@@ -1,16 +1,14 @@
-## Hi there 👋
+# Gift Card Trading Platform
 
-<!--
-**cardvaulthq/cardvaulthq** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+A full-stack gift card trading system with:
+- Buy & Sell modes
+- Internal & External storage
+- Live trading feed
+- Wallets (Local, Foreign, USDT)
+- Admin control
+- Biometric login
 
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## Tech Stack
+- Frontend: Next.js + Tailwind
+- Backend: Node.js + Express
+- Database: PostgreSQL + Prisma
