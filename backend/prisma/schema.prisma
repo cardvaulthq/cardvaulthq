@@ -1,23 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------
+// USER MODEL
+// -----------------
+model User {
+  id        String   @id @default(uuid())
+  fullName  String
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+
+  ips       UserIP[]
+  cards     GiftCard[]
+
+  createdAt DateTime @default(now())
+}
+
+// -----------------
+// USER IP / DEVICE TRACKING
+// -----------------
+model UserIP {
+  id        String   @id @default(uuid())
+  userId    String
+  ip        String
+  device    String
+  location  String?
+  createdAt DateTime @default(now())
+
+  user      User @relation(fields: [userId], references: [id])
+}
+
+// -----------------
+// GIFT CARD MODEL
+// -----------------
 model GiftCard {
-  id             String     @id @default(uuid())
-  type           String
-  value          Float
-  currency       String
-  country        String
+  id              String   @id @default(uuid())
+  type            String
+  value           Float
+  currency        String
+  country         String
 
-  frontImage     String
-  backImage      String
+  frontImage      String
+  backImage       String
 
-  scratchCode    String?    // extracted after system scratch
-  scratchedByApp Boolean    @default(false)
+  scratchCode     String?   // extracted after system scratch
   scratchedByUser Boolean   @default(false)
+  scratchedByApp  Boolean   @default(false)
 
-  ownerId        String
-  owner          User       @relation(fields: [ownerId], references: [id])
+  ownerId         String
+  owner           User     @relation(fields: [ownerId], references: [id])
 
-  storedInAdmin  Boolean    @default(true)  // Admin Vault always has it
+  status          CardStatus @default(PENDING)
+  storedInAdmin   Boolean    @default(true) // Admin vault mirror
 
-  status         CardStatus @default(PENDING)
+  createdAt       DateTime   @default(now())
+}
 
-  createdAt      DateTime   @default(now())
+// -----------------
+// ENUMS
+// -----------------
+enum Role {
+  USER
+  ADMIN
+}
+
+enum CardStatus {
+  PENDING
+  TRADING
+  SOLD
+  FAILED
+  RECOVERED
 }
