@@ -1,23 +1,23 @@
-generator client {
-  provider = "prisma-client-js"
-}
+model GiftCard {
+  id             String     @id @default(uuid())
+  type           String
+  value          Float
+  currency       String
+  country        String
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+  frontImage     String
+  backImage      String
 
-model User {
-  id           String   @id @default(uuid())
-  fullName     String
-  username     String   @unique
-  email        String   @unique
-  passwordHash String
-  role         Role     @default(USER)
-  createdAt    DateTime @default(now())
-}
+  scratchCode    String?    // extracted after system scratch
+  scratchedByApp Boolean    @default(false)
+  scratchedByUser Boolean   @default(false)
 
-enum Role {
-  USER
-  ADMIN
+  ownerId        String
+  owner          User       @relation(fields: [ownerId], references: [id])
+
+  storedInAdmin  Boolean    @default(true)  // Admin Vault always has it
+
+  status         CardStatus @default(PENDING)
+
+  createdAt      DateTime   @default(now())
 }
