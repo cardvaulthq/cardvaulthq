@@ -57,3 +57,34 @@ router.post("/login", async (req, res) => {
 });
 
 export default router;
+
+import express from "express";
+import { prisma } from "../config/db.js";
+const router = express.Router();
+
+// Return challenge for WebAuthn
+router.get("/biometric-challenge", async (req, res) => {
+  const { email } = req.query;
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  // Server generates a challenge for the client (WebAuthn)
+  const challenge = {
+    challenge: new Uint8Array(32),
+    timeout: 60000,
+    allowCredentials: [], // Fill with registered credentials later
+    userVerification: "preferred"
+  };
+
+  res.json(challenge);
+});
+
+// Verify biometric login
+router.post("/biometric-verify", async (req, res) => {
+  const { credential } = req.body;
+  // TODO: Verify with WebAuthn server-side logic
+  // For MVP, assume always successful
+  res.json({ success: true });
+});
+
+export default router;
